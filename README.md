@@ -40,14 +40,21 @@ run:
 # Usage
 
 ```python
+# Create BDD
+
 from dd import BDD
 
 manager.declare('x', 'y', 'z')
-
 x, y, z = map(manager.var, 'xyz')
 bexpr = x & y & z
 
-dfa = to_dfa(bexpr)
 
+# Convert to DFA
+
+from bdd2dfa import to_dfa
+
+dfa = to_dfa(bexpr)
 assert len(dfa.states()) == 7
+assert dfa.label([1, 1, 1, 1])
+assert not dfa.label([0, 1, 1, 1])
 ```
