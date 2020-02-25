@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "bdd2dfa"
+readme="README.md"
+version = "0.1.0"
+description = "Python library for converting binary decision diagrams to automata."
+authors = ["Marcell Vazquez-Chanlatte <mvc@linux.com>"]
+repository = "https://github.com/mvcisback/bdd2dfa"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+dfa = "^0.4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+hypothesis = "^5.5.1"
+codecov = "^2.0.15"
+pytest-flake8 = "^1.0.4"
+pytest-cov = "^2.8.1"
+dd = "^0.5.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
