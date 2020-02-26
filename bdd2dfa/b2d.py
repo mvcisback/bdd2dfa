@@ -26,10 +26,6 @@ class Node:
     def __hash__(self):
         return hash((self.ref, self.time))
 
-    def __repr__(self):
-        ref = abs(self.ref)
-        return f"(ref={ref}, time={self.time})"
-
     @property
     def is_leaf(self):
         return self.node in (self.node.bdd.true, self.node.bdd.false)
