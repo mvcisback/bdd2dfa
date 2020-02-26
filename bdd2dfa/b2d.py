@@ -1,35 +1,68 @@
+from typing import TypeVar
+
+import attr
+
 from dfa import DFA
 
 
-def to_dfa(bdd, lazy=False) -> DFA:
-    true, false = bdd.bdd.true, bdd.bdd.false
-    horizon = len(bdd.manager.vars)
+BDD = TypeVar('BDD')
 
-    def label(node_t):
-        time, node = node_t
 
-        if time < horizon:
-            assert node not in (true, false)
+@attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
+class Node:
+    horizon: int
+    node: BDD
+    time: int = 0
+    parity: bool = False
+
+    def __eq__(self, other) -> bool:
+        return (self.ref, self.time) == (other.ref, other.time)
+
+    @property
+    def ref(self) -> int:
+        val = self.node.node
+        return val if self.parity else -val
+
+    def __hash__(self):
+        return hash((self.ref, self.time))
+
+    def __repr__(self):
+        ref = abs(self.ref)
+        return f"(ref={ref}, time={self.time})"
+
+    @property
+    def is_leaf(self):
+        return self.node in (self.node.bdd.true, self.node.bdd.false)
+
+    def label(self):
+        if self.time < self.horizon:
+            assert not self.is_leaf
             return None
 
-        return node == true
+        return (self.node == self.node.bdd.true) ^ self.parity
 
-    def transition(node_t, val):
-        time, node = node_t
-        time += 1
+    def transition(self, val):
+        time = self.time + 1
 
-        if node in (true, false):
-            time = min(horizon, time)
-            return time, node
+        if self.is_leaf:
+            time = min(self.horizon, time)
+            return attr.evolve(self, time=time)
 
-        assert time <= horizon
+        assert self.time <= self.horizon
 
-        node = node.high if val else node.low
-        return time, node
+        parity = self.parity ^ self.node.negated
+        node = self.node.high if val else self.node.low
+
+        return attr.evolve(self, time=time, node=node, parity=parity)
+
+
+def to_dfa(bdd, lazy=False) -> DFA:
+    horizon = len(bdd.manager.vars)
 
     dfa = DFA(
-        start=(0, bdd), inputs={True, False}, outputs={True, False, None},
-        label=label, transition=transition,
+        start=Node(horizon=horizon, node=bdd, parity=bdd.negated),
+        inputs={True, False}, outputs={True, False, None},
+        label=Node.label, transition=Node.transition,
     )
 
     if not lazy:
