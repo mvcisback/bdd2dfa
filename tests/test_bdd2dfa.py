@@ -47,6 +47,17 @@ def test_parity():
         assert dfa.label(word) == (sum(word) % 2)
 
 
+def test_bnode():
+    manager = BDD()
+    manager.declare('x', 'y', 'z')
+
+    x, y, z = map(manager.var, 'xyz')
+
+    bexpr = x & y & z
+    dfa = to_dfa(bexpr, qdd=False)
+    assert len(dfa.states()) == 5
+
+
 def test_draw():
     from tempfile import NamedTemporaryFile
     from dfa.draw import write_dot

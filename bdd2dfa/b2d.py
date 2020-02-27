@@ -10,7 +10,6 @@ BDD = TypeVar('BDD')
 
 @attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
 class BNode:
-    horizon: int
     node: BDD
     parity: bool = False
 
@@ -55,18 +54,22 @@ class QNode(BNode):
         return f"(ref={self.ref}, time={self.time})"
 
     def transition(self, val):
-        time = min(self.horizon, self.time + 1)
+        time = max(0, self.time - 1)
         node = super().transition(val)
         return attr.evolve(node, time=time)
 
 
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
-    horizon = len(bdd.manager.vars)
-    Node = QNode if qdd else BNode
+    if not qdd:
+        Node = BNode
+        start = BNode(node=bdd, parity=bdd.negated)
+    else:
+        Node = QNode
+        horizon = len(bdd.manager.vars)
+        start = QNode(time=horizon, node=bdd, parity=bdd.negated)
 
     dfa = DFA(
-        start=Node(horizon=horizon, node=bdd, parity=bdd.negated),
-        inputs={True, False}, outputs={True, False, None},
+        start=start, inputs={True, False}, outputs={True, False, None},
         label=Node.label, transition=Node.transition,
     )
 
