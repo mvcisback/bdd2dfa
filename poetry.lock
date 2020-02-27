@@ -117,6 +117,10 @@ attrs = ">=19.1,<20.0"
 funcy = ">=1.12,<2.0"
 lazytree = ">=0.3.1,<0.4.0"
 
+[package.dependencies.pydot]
+optional = true
+version = ">=1.4,<2.0"
+
 [package.extras]
 draw = ["pydot (>=1.4,<2.0)"]
 
@@ -461,7 +465,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "fc240ca3795dc80f81d456405eae20b4e47913851bb284d0a09df1b99db780e5"
+content-hash = "f24c672778f81714b0ae38684630aa398bc544da551ebf2f883b33138f869e40"
 python-versions = "^3.7"
 
 [metadata.files]

@@ -23,6 +23,9 @@ class Node:
         val = self.node.node
         return val if self.parity else -val
 
+    def __str__(self):
+        return f"(ref={self.ref}, time={self.time})"
+
     def __hash__(self):
         return hash((self.ref, self.time))
 
@@ -31,8 +34,7 @@ class Node:
         return self.node in (self.node.bdd.true, self.node.bdd.false)
 
     def label(self):
-        if self.time < self.horizon:
-            assert not self.is_leaf
+        if not self.is_leaf:
             return None
 
         return (self.node == self.node.bdd.true) ^ self.parity
