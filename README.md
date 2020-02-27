@@ -104,8 +104,14 @@ write_dot(bdd, "bdd.dot")
 
 Compiling using the `dot` command yields the following for `qdd.dot`
 
-![qdd](https://raw.githubusercontent.com/mvcisback/bdd2dfa/master/assets/qdd.svg)
+<img
+    src="https://raw.githubusercontent.com/mvcisback/bdd2dfa/master/assets/qdd.svg"
+    alt="qdd" width=300px
+/>
 
 and the following for `bdd.dot`:
 
-![bdd](https://raw.githubusercontent.com/mvcisback/bdd2dfa/master/assets/bdd.svg)
+<img
+    src="https://raw.githubusercontent.com/mvcisback/bdd2dfa/master/assets/bdd.svg"
+    alt="bdd" width=300px
+/>
