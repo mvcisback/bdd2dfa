@@ -9,14 +9,13 @@ BDD = TypeVar('BDD')
 
 
 @attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
-class Node:
+class BNode:
     horizon: int
     node: BDD
-    time: int = 0
     parity: bool = False
 
     def __eq__(self, other) -> bool:
-        return (self.ref, self.time) == (other.ref, other.time)
+        return str(self) == str(other)
 
     @property
     def ref(self) -> int:
@@ -24,10 +23,10 @@ class Node:
         return val if self.parity else -val
 
     def __str__(self):
-        return f"(ref={self.ref}, time={self.time})"
+        return str(self.ref)
 
     def __hash__(self):
-        return hash((self.ref, self.time))
+        return hash(str(self))
 
     @property
     def is_leaf(self):
@@ -40,22 +39,30 @@ class Node:
         return (self.node == self.node.bdd.true) ^ self.parity
 
     def transition(self, val):
-        time = self.time + 1
-
         if self.is_leaf:
-            time = min(self.horizon, time)
-            return attr.evolve(self, time=time)
-
-        assert self.time <= self.horizon
+            return self
 
         parity = self.parity ^ self.node.negated
         node = self.node.high if val else self.node.low
+        return attr.evolve(self, node=node, parity=parity)
 
-        return attr.evolve(self, time=time, node=node, parity=parity)
+
+@attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
+class QNode(BNode):
+    time: int = 0
+
+    def __str__(self):
+        return f"(ref={self.ref}, time={self.time})"
+
+    def transition(self, val):
+        time = min(self.horizon, self.time + 1)
+        node = super().transition(val)
+        return attr.evolve(node, time=time)
 
 
-def to_dfa(bdd, lazy=False) -> DFA:
+def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     horizon = len(bdd.manager.vars)
+    Node = QNode if qdd else BNode
 
     dfa = DFA(
         start=Node(horizon=horizon, node=bdd, parity=bdd.negated),
