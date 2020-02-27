@@ -58,6 +58,9 @@ class QNode(BNode):
         node = super().transition(val)
         return attr.evolve(node, time=time)
 
+    def label(self):
+        return None if self.time > 0 else super().label()
+
 
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     if not qdd:
