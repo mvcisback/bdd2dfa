@@ -47,6 +47,22 @@ def test_parity():
         assert dfa.label(word) == (sum(word) % 2)
 
 
+def test_negated_parity():
+    manager = BDD()
+    manager.declare('x', 'y', 'z')
+
+    x, y, z = map(manager.var, 'xyz')
+
+    bexpr = ~xor(xor(x, y), z)
+
+    dfa = to_dfa(bexpr)
+
+    assert len(dfa.states()) == 7
+
+    for word in product([0, 1], [0, 1], [0, 1]):
+        assert dfa.label(word) != (sum(word) % 2)
+
+
 def test_bnode():
     manager = BDD()
     manager.declare('x', 'y', 'z')

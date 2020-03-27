@@ -65,11 +65,11 @@ class QNode(BNode):
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     if not qdd:
         Node = BNode
-        start = BNode(node=bdd, parity=bdd.negated)
+        start = BNode(node=bdd)
     else:
         Node = QNode
         horizon = len(bdd.manager.vars)
-        start = QNode(time=horizon, node=bdd, parity=bdd.negated)
+        start = QNode(time=horizon, node=bdd)
 
     dfa = DFA(
         start=start, inputs={True, False}, outputs={True, False, None},
