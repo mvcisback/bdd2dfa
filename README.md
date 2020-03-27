@@ -96,7 +96,7 @@ visualize the difference between `qdd` and `bdd` by exporting to a
 graphviz `dot` file.
 
 ```python
-from dfa import write_dot
+from dfa.draw import write_dot
 
 write_dot(qdd, "qdd.dot")
 write_dot(bdd, "bdd.dot")

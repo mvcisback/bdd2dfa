@@ -19,7 +19,7 @@ class BNode:
     @property
     def ref(self) -> int:
         val = self.node.node
-        return val if self.parity else -val
+        return -val if self.parity else val
 
     def __str__(self):
         return str(self.ref)
