@@ -14,6 +14,9 @@ def test_and():
 
     dfa = to_dfa(bexpr)
 
+    from dfa.draw import write_dot
+    write_dot(dfa, 'foo.dot')
+
     assert len(dfa.states()) == 7
     assert dfa.label([1, 1, 1, 1])
     assert not dfa.label([0, 1, 1, 1])

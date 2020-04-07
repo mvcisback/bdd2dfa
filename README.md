@@ -64,18 +64,19 @@ assert qdd.label([1, 1]) is None    # Non-leaf node.
 
 Each state of the resulting `DFA` object has three attribute:
 
-1. `time`: A number between #vars and 0. This number indicates the
-    number of decisions left to be made.
-2. `node`: A reference to the internal BDD node given by `dd`.
-3. `parity`: `dd` supports Edge Negated `BDD`s, where some edges point
+1. `node`: A reference to the internal BDD node given by `dd`.
+1. `parity`: `dd` supports Edge Negated `BDD`s, where some edges point
    to a Boolean function that is the negation of the Boolean function
    the node would point to in a standard `BDD`. Parity value determines
    whether or not the node 
+1. `debt`: Number of inputs needed before this node can
+   transition. Required since `BDD` edges can skip over irrelevant
+   decisions.
 
 For example,
 ```python
 assert qdd.start.parity is True
-assert qdd.start.time == 3
+assert qdd.start.debt == 0
 assert qdd.start.node.var == 'x'
 ```
 
@@ -89,7 +90,7 @@ bdd = to_dfa(bexpr, qdd=False)
 ```
 
 The `DFA` uses a similar state as the `QDD` case, but does not have a
-time attribute.
+`debt` attribute. Useful when one just wants to walk the `BDD`.
 
 If the `dfa` package was installed with the `draw` option, we can
 visualize the difference between `qdd` and `bdd` by exporting to a
