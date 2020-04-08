@@ -54,13 +54,12 @@ class QNode(BNode):
         return f"(ref={self.ref}, debt={self.debt})"
 
     def transition(self, val):
-        debt = max(0, self.debt - 1)
-
-        if debt == 0:
+        if self.debt == 0:
             state2 = super().transition(val)
             debt = max(state2.node.level - self.node.level - 1, 0)
             return QNode(state2.node, state2.parity, debt)
 
+        debt = max(0, self.debt - 1)
         return attr.evolve(self, debt=debt)
 
     def label(self):
@@ -69,7 +68,10 @@ class QNode(BNode):
 
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     Node = QNode if qdd else BNode
-    start = Node(node=bdd)
+    if qdd:
+        start = QNode(node=bdd, debt=bdd.level)
+    else:
+        start = Node(node=bdd)
 
     dfa = DFA(
         start=start, inputs={True, False}, outputs={True, False, None},

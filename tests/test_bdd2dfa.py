@@ -14,9 +14,6 @@ def test_and():
 
     dfa = to_dfa(bexpr)
 
-    from dfa.draw import write_dot
-    write_dot(dfa, 'foo.dot')
-
     assert len(dfa.states()) == 7
     assert dfa.label([1, 1, 1, 1])
     assert not dfa.label([0, 1, 1, 1])
@@ -90,3 +87,49 @@ def test_draw():
 
     with NamedTemporaryFile() as f:
         write_dot(dfa, f.name)
+
+
+def test_true():
+    manager = BDD()
+    manager.declare('x', 'y', 'z')
+
+    bexpr = manager.true
+
+    dfa = to_dfa(bexpr)
+
+    assert len(dfa.states()) == 4
+    assert dfa.label([1, 1, 1, 1])
+    assert dfa.label([0, 1, 1, 1])
+    assert dfa.label([1, 1]) is None
+
+    dfa = to_dfa(bexpr, qdd=False)
+    assert len(dfa.states()) == 1
+
+
+def test_skip():
+    manager = BDD()
+    manager.declare('x', 'y', 'z')
+    manager.declare('x', 'y', 'z')
+
+    bexpr = manager.var(manager.var_at_level(2))
+    dfa = to_dfa(bexpr)
+
+    assert len(dfa.states()) == 5
+    assert dfa.label([1, 1, 1]) is True
+    assert dfa.label([0, 1, 1]) is True
+    assert dfa.label([0, 1, 0]) is False
+    assert dfa.label([1, 1]) is None
+
+    dfa = to_dfa(bexpr, qdd=False)
+    assert len(dfa.states()) == 3
+
+    bexpr &= manager.var(manager.var_at_level(0))
+    dfa = to_dfa(bexpr)
+
+    assert len(dfa.states()) == 7
+    assert dfa.label([1, 0, 1]) is True
+    assert dfa.label([1, 1, 1]) is True
+    assert dfa.label([0, 1, 1]) is False
+    assert dfa.label([0, 1, 0]) is False
+    assert dfa.label([1, 1, 0]) is False
+    assert dfa.label([1, 1]) is None
