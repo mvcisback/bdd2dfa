@@ -12,8 +12,7 @@ The package takes as input a BDD from the [`dd` package](https://github.com/tuli
 and returns a DFA from the [`dfa` package](https://github.com/mvcisback/dfa).
 
 Formally, the resulting `DFA` objects are quasi-reduced BDDs (QDDs)
-where the label of non-leaf states in the original BDD is `None` and
-all leaves self loop.
+where all leaves self loop and the label of states is a tuple: `(int, str | bool)`, where the first entry determines the number of inputs until this node is active and the second entry is the decision variable of the node or the BDD's truth assignment.
 
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
@@ -57,9 +56,17 @@ qdd = to_dfa(bexpr)
 
 assert len(qdd.states()) == 7
 
-assert qdd.label([1, 1, 1, 1])      # QDD rejects.
-assert qdd dfa.label([0, 1, 1, 1])  # QDD accepts.
-assert qdd.label([1, 1]) is None    # Non-leaf node.
+# End at leaf node.
+assert qdd.label([1, 1, 1]) == (0, True)
+assert qdd.label([0, 1, 1]) == (0, False)
+
+# End at Non-leaf node.
+assert qdd.label([1, 1]) == (0, 'z')
+assert qdd.label([0, 1]) == (1, False)
+
+# leaf nodes are self loops.
+assert qdd.label([1, 1, 1, 1]) == (0, True)
+assert qdd.label([1, 1, 1, 1, 1]) == (0, True)
 ```
 
 Each state of the resulting `DFA` object has three attribute:
@@ -90,7 +97,9 @@ bdd = to_dfa(bexpr, qdd=False)
 ```
 
 The `DFA` uses a similar state as the `QDD` case, but does not have a
-`debt` attribute. Useful when one just wants to walk the `BDD`.
+`debt` attribute. Useful when one just wants to walk the `BDD`. 
+
+**note** The labeling alphabet also only returns the decision variable/truth assignment.
 
 If the `dfa` package was installed with the `draw` option, we can
 visualize the difference between `qdd` and `bdd` by exporting to a
