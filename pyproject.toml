@@ -10,10 +10,10 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 dfa = "^2.0.0"
-attrs = "^19.3.0"
+attrs = "^20.0.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.0.0"
 hypothesis = "^5.5.1"
 codecov = "^2.0.15"
 pytest-flake8 = "^1.0.4"

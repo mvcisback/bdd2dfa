@@ -15,9 +15,9 @@ def test_and():
     dfa = to_dfa(bexpr)
 
     assert len(dfa.states()) == 7
-    assert dfa.label([1, 1, 1, 1])
-    assert not dfa.label([0, 1, 1, 1])
-    assert dfa.label([1, 1]) is None
+    assert dfa.label([1, 1, 1, 1]) == (0, True)
+    assert dfa.label([0, 1, 1, 1]) == (0, False)
+    assert dfa.label([1, 1]) == (0, 'z')
 
     s1 = dfa.transition([])
     s2 = dfa.transition([0])
@@ -25,7 +25,7 @@ def test_and():
 
     assert s1 != s2 != s3
     assert s3 == dfa.transition([1, 0])
-
+    
 
 def xor(x, y):
     return (x | y) & ~(x & y)
@@ -44,7 +44,9 @@ def test_parity():
     assert len(dfa.states()) == 7
 
     for word in product([0, 1], [0, 1], [0, 1]):
-        assert dfa.label(word) == (sum(word) % 2)
+        debt, label = dfa.label(word)
+        assert debt == 0
+        assert label == (sum(word) % 2)
 
 
 def test_negated_parity():
@@ -60,7 +62,9 @@ def test_negated_parity():
     assert len(dfa.states()) == 7
 
     for word in product([0, 1], [0, 1], [0, 1]):
-        assert dfa.label(word) != (sum(word) % 2)
+        debt, label = dfa.label(word)
+        assert debt == 0
+        assert label != (sum(word) % 2)
 
 
 def test_bnode():
@@ -98,9 +102,9 @@ def test_true():
     dfa = to_dfa(bexpr)
 
     assert len(dfa.states()) == 4
-    assert dfa.label([1, 1, 1, 1])
-    assert dfa.label([0, 1, 1, 1])
-    assert dfa.label([1, 1]) is None
+    assert dfa.label([1, 1, 1, 1]) == (0, True)
+    assert dfa.label([0, 1, 1, 1]) == (0, True)
+    assert dfa.label([1, 1]) == (1, True)
 
     dfa = to_dfa(bexpr, qdd=False)
     assert len(dfa.states()) == 1
@@ -115,10 +119,10 @@ def test_skip():
     dfa = to_dfa(bexpr)
 
     assert len(dfa.states()) == 5
-    assert dfa.label([1, 1, 1]) is True
-    assert dfa.label([0, 1, 1]) is True
-    assert dfa.label([0, 1, 0]) is False
-    assert dfa.label([1, 1]) is None
+    assert dfa.label([1, 1, 1]) == (0, True)
+    assert dfa.label([0, 1, 1]) == (0, True)
+    assert dfa.label([0, 1, 0]) == (0, False)
+    assert dfa.label([1, 1]) == (0, 'z')
 
     dfa = to_dfa(bexpr, qdd=False)
     assert len(dfa.states()) == 3
@@ -127,9 +131,9 @@ def test_skip():
     dfa = to_dfa(bexpr)
 
     assert len(dfa.states()) == 7
-    assert dfa.label([1, 0, 1]) is True
-    assert dfa.label([1, 1, 1]) is True
-    assert dfa.label([0, 1, 1]) is False
-    assert dfa.label([0, 1, 0]) is False
-    assert dfa.label([1, 1, 0]) is False
-    assert dfa.label([1, 1]) is None
+    assert dfa.label([1, 0, 1]) == (0, True)
+    assert dfa.label([1, 1, 1]) == (0, True)
+    assert dfa.label([0, 1, 1]) == (0, False)
+    assert dfa.label([0, 1, 0]) == (0, False)
+    assert dfa.label([1, 1, 0]) == (0, False)
+    assert dfa.label([1, 1]) == (0, 'z')

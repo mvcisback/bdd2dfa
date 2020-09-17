@@ -1,3 +1,4 @@
+from itertools import product
 from typing import TypeVar
 
 import attr
@@ -33,7 +34,7 @@ class BNode:
 
     def label(self):
         if not self.is_leaf:
-            return None
+            return self.node.var
 
         return (self.node == self.node.bdd.true) ^ self.parity
 
@@ -63,7 +64,7 @@ class QNode(BNode):
         return attr.evolve(self, debt=debt)
 
     def label(self):
-        return None if self.debt > 0 else super().label()
+        return (self.debt, super().label())
 
 
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
@@ -73,8 +74,13 @@ def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     else:
         start = Node(node=bdd)
 
+    levels = range(len(bdd.bdd.vars))
+    bdd_labels = set(bdd.bdd.vars) | {True, False}
+
     dfa = DFA(
-        start=start, inputs={True, False}, outputs={True, False, None},
+        start=start, 
+        inputs={True, False}, 
+        outputs=product(levels, bdd_labels),
         label=Node.label, transition=Node.transition,
     )
 
