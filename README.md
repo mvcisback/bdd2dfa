@@ -43,6 +43,7 @@ run:
 
 from dd import BDD
 
+manager = BDD()
 manager.declare('x', 'y', 'z')
 x, y, z = map(manager.var, 'xyz')
 bexpr = x & y & z
