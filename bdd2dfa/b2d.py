@@ -78,8 +78,8 @@ def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     bdd_labels = set(bdd.bdd.vars) | {True, False}
 
     dfa = DFA(
-        start=start, 
-        inputs={True, False}, 
+        start=start,
+        inputs={True, False},
         outputs=product(levels, bdd_labels),
         label=Node.label, transition=Node.transition,
     )

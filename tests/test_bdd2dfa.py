@@ -25,7 +25,7 @@ def test_and():
 
     assert s1 != s2 != s3
     assert s3 == dfa.transition([1, 0])
-    
+
 
 def xor(x, y):
     return (x | y) & ~(x & y)
