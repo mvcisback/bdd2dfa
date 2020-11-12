@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from itertools import product
 from typing import TypeVar
 
@@ -19,14 +21,14 @@ class BNode:
 
     @property
     def ref(self) -> int:
-        val = self.node.node
-        return -val if self.parity else val
+        node = ~self.node if self.parity else self.node
+        return int(node)
 
     def __str__(self):
         return str(self.ref)
 
     def __hash__(self):
-        return hash(str(self))
+        return self.ref
 
     @property
     def is_leaf(self):
@@ -46,6 +48,15 @@ class BNode:
         node = self.node.high if val else self.node.low
         return attr.evolve(self, node=node, parity=parity)
 
+    @property
+    def level(self):
+        if self.is_leaf:
+            return len(self.node.bdd.vars)
+        return self.node.level
+
+    def as_qnode(self) -> QNode:
+        return QNode(self.node, self.parity, self.level)
+
 
 @attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
 class QNode(BNode):
@@ -57,7 +68,7 @@ class QNode(BNode):
     def transition(self, val):
         if self.debt == 0:
             state2 = super().transition(val)
-            debt = max(state2.node.level - self.node.level - 1, 0)
+            debt = max(state2.level - self.level - 1, 0)
             return QNode(state2.node, state2.parity, debt)
 
         debt = max(0, self.debt - 1)
@@ -68,11 +79,10 @@ class QNode(BNode):
 
 
 def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
-    Node = QNode if qdd else BNode
+    start = BNode(node=bdd)
     if qdd:
-        start = QNode(node=bdd, debt=bdd.level)
-    else:
-        start = Node(node=bdd)
+        start = start.as_qnode()
+    Node = type(start)
 
     levels = range(len(bdd.bdd.vars))
     bdd_labels = set(bdd.bdd.vars) | {True, False}
