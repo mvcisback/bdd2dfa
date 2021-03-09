@@ -11,7 +11,7 @@ from dfa import DFA
 BDD = TypeVar('BDD')
 
 
-@attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
+@attr.s(frozen=True, auto_detect=True, auto_attribs=True, slots=True)
 class BNode:
     node: BDD
     parity: bool = False
@@ -24,7 +24,7 @@ class BNode:
         node = ~self.node if self.parity else self.node
         return int(node)
 
-    def __str__(self):
+    def __repr__(self):
         return str(self.ref)
 
     def __hash__(self):
@@ -58,11 +58,11 @@ class BNode:
         return QNode(self.node, self.parity, self.level)
 
 
-@attr.s(frozen=True, eq=False, auto_attribs=True, repr=False)
+@attr.s(frozen=True, auto_attribs=True, auto_detect=True, eq=False, slots=True)
 class QNode(BNode):
     debt: int = 0
 
-    def __str__(self):
+    def __repr__(self):
         return f"(ref={self.ref}, debt={self.debt})"
 
     def transition(self, val):
