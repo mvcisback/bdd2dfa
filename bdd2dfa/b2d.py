@@ -17,12 +17,12 @@ class BNode:
     parity: bool = False
 
     def __eq__(self, other) -> bool:
-        return str(self) == str(other)
+        return self.ref == other.ref
 
     @property
     def ref(self) -> int:
-        node_id = int(self.node)
-        return node_id if self.parity else -node_id
+        node = self.node if self.parity else ~self.node
+        return int(node)
 
     def __repr__(self):
         return str(self.ref)
@@ -58,9 +58,15 @@ class BNode:
         return QNode(self.node, self.parity, self.level)
 
 
-@attr.s(frozen=True, auto_attribs=True, auto_detect=True, eq=False, slots=True)
+@attr.s(frozen=True, auto_attribs=True, auto_detect=True, slots=True)
 class QNode(BNode):
     debt: int = 0
+
+    def __eq__(self, other):
+        return (self.ref == other.ref) and (self.debt == other.debt)
+
+    def __hash__(self):
+        return hash((self.ref, self.debt))
 
     def __repr__(self):
         return f"(ref={self.ref}, debt={self.debt})"
