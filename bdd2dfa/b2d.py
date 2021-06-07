@@ -11,7 +11,7 @@ from dfa import DFA
 BDD = TypeVar('BDD')
 
 
-@attr.s(frozen=True, auto_detect=True, auto_attribs=True, slots=True)
+@attr.s(frozen=True, auto_detect=True, auto_attribs=True)
 class BNode:
     node: BDD
     parity: bool = False
@@ -58,7 +58,7 @@ class BNode:
         return QNode(self.node, self.parity, self.level)
 
 
-@attr.s(frozen=True, auto_attribs=True, auto_detect=True, slots=True)
+@attr.s(frozen=True, auto_attribs=True, auto_detect=True)
 class QNode(BNode):
     debt: int = 0
 
