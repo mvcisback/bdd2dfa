@@ -21,8 +21,8 @@ class BNode:
 
     @property
     def ref(self) -> int:
-        node = ~self.node if self.parity else self.node
-        return int(node)
+        node_id = int(self.node) 
+        return node_id if self.parity else -node_id
 
     def __repr__(self):
         return str(self.ref)
