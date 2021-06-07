@@ -1,6 +1,6 @@
 from itertools import product
 
-from dd import BDD
+from dd.cudd import BDD
 
 from bdd2dfa import to_dfa
 

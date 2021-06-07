@@ -91,12 +91,14 @@ def to_dfa(bdd, lazy=False, qdd=True) -> DFA:
     Node = type(start)
 
     levels = range(len(bdd.bdd.vars))
-    bdd_labels = set(bdd.bdd.vars) | {True, False}
+    outputs = set(bdd.bdd.vars) | {True, False}
+    if qdd:
+        outputs = product(levels, outputs)
 
     dfa = DFA(
         start=start,
         inputs={True, False},
-        outputs=product(levels, bdd_labels),
+        outputs=outputs,
         label=Node.label, transition=Node.transition,
     )
 
