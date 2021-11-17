@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "bdd2dfa"
 readme="README.md"
-version = "1.0.8"
+version = "1.0.9"
 description = "Python library for converting binary decision diagrams to automata."
 authors = ["Marcell Vazquez-Chanlatte <mvc@linux.com>"]
 repository = "https://github.com/mvcisback/bdd2dfa"
