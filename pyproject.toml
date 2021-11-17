@@ -8,9 +8,9 @@ repository = "https://github.com/mvcisback/bdd2dfa"
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.9"
 dfa = "^2.0.0"
-attrs = "^20.0.0"
+attrs = "^21.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
